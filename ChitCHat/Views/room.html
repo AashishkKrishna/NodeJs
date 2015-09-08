@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to ChitChat</title>
+    <meta charset="utf-8" />
+    <link href="../css/bootstrap-theme.css" rel="stylesheet" />
+    <link href="../css/bootstrap.css" rel="stylesheet" />
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        $(function(){
+            var host = '{{config.host}}';
+            var message = io.connect(host + '/messages');
+            var roomnumber = {{room_number}};
+            var username = '{{user.fllname}}';
+            var userPic = '{{user.profilePic}}';
+        
+            message.on('connect',function(err){
+                console.log('Connection established');
+                
+                message.emit('joinroom',{room : roomnumber, user : username, userpic : userPic})
+            })   
+            
+            $(document).on('keyup','.newmessage',function(e){
+                if(e.which===13 &&  $(this).val()!=''){
+                    message.emit('newmessage',{
+                        room_number : roomnumber,
+                        user : username,
+                        userpic : userPic,
+                        message : $(this).val()
+                    })
+                    updateMessagefeed(userPic,$(this).val());
+                    $(this).val(''); 
+                }
+            })
+            
+            message.on('messagefeed',function(data){
+                var msgs = JSON.parse(data);
+                updateMessagefeed(msgs.userpic,msgs.message);
+            })
+            
+            function updateMessagefeed(userPic,message){
+                var str =  '<li>';
+                    str+=  '<div class="msgbox">';
+                    str+=  '<div class="pic">';
+                    str+=  '<img src="' + userPic +'" />';
+                    str+=  '</div>';
+                    str+=  '<div class="msg">' + message + '</div>';
+                    str+=  '</div></li>';
+                    
+                $(str).prependTo($('.messages'));
+            }
+            
+            message.on('updateUserslist',function(data){
+                var userlist = JSON.parse(data);
+                $('.users').html('');
+                for(var n =0;n<userlist.length;n++){
+                    var str ='<li><img src="' + userlist[i].userpic +'" /><h5>' + userlist[i].username +'</h5></li>';
+                    $(str).prependTo($('.users'));
+                }
+            })
+            
+            setInterval(function(){
+                message.emit('updateList',{room : roomnumber});
+            },15*100)
+      })     
+     </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">ChatChat</h1>
+        <div class="userbox">
+            <img src="{{user.profilePic}}" class="userPic" />
+            <h3 class="userbox">{{user.fullname}} | <a href="/logout">Logout</a><a href="/chatrooms">More Chatrooms</a></h3>
+        </div>
+        <div class="roomname">
+            <h5>{{room_name}}</h5>
+        </div>
+        <div class="a-messages">
+               <ul class="messages">
+               </ul>
+        </div>
+        <div class="a-users">
+            <ul class="users">
+               
+            </ul>
+        </div>
+        <div class="newmessage">
+            <input type="text" class="newmessage" autocomplete="off" placeholder="Type in your message and press enter !" />
+        </div>
+    </div>
+</body>
+</html>

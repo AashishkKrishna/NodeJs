@@ -1,0 +1,9 @@
+{
+  "name": "HelloWorldServer",
+  "version": "0.0.0",
+  "description": "HelloWorldServer",
+  "main": "app.js",
+  "author": {
+    "name": "aashi"
+  }
+}
