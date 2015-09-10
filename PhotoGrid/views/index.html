@@ -7,6 +7,22 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 		<script src="js/photogrid_utils.js"></script>
 		<script type="text/javascript">
+			$(function(){
+				var host = '{{host}}';
+				
+				$(document).on('click','.doUpload',function(){
+					uploadNow();
+				})
+				
+				function uploadNow(){
+					var uploadURL = host + '/upload';
+					var uploadFile = $('.uploadPic');
+					if(!uploadFile.val('')){
+						var form = new FormData();
+						form
+					}
+				}
+			})
 		</script>
 	</head>
 	<body>
