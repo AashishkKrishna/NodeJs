@@ -5,6 +5,7 @@
 		<title>PhotoGrid</title>
 		<link rel="stylesheet" href="css/bootstrap.css">
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+		<script src="/socket.io/socket.io.js"></script>
 		<script src="js/photogrid_utils.js"></script>
 		<script type="text/javascript">
 			$(function(){
@@ -14,12 +15,41 @@
 					uploadNow();
 				})
 				
+				var socket = io(host);
+				
+				socket.on('status',function(data){
+					showStatus(data.msg,data.delay);
+				})
+				
+				socket.on('doUpdate',function(){
+					renderList();
+				})
+				
 				function uploadNow(){
+					$('.progress').fadeIn(100);
 					var uploadURL = host + '/upload';
 					var uploadFile = $('.uploadPic');
 					if(!uploadFile.val('')){
 						var form = new FormData();
-						form
+						form.append("upload",uploadFile[0].files[0]);
+						
+						//Perform the ajax post request and send the file
+						ajax({
+							method : "post",
+							url : uploadURL,
+							success : function(){
+								$('.progress').fadeOut(200);
+								uploadFile.val('');
+							},
+							progress : function(e){
+								if(e.lengthComputable){
+									var percentage = Math.round((e.loaded * 100)/e.total);
+									$('.progress').css('width',(percentage + '%'));
+									
+								}	
+							},
+							payload: form
+						})
 					}
 				}
 			})
