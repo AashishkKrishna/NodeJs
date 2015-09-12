@@ -1,7 +1,7 @@
 {
 	"host" : "http://localhost:3000",
-	"S3Accesskey" : "AJSBFJAFBDSF", //Random key,
-	"S3Secretkey" : "ljdhfudshfiuhdsfds", //Random
+	"S3Accesskey" : "AJSBFJAFBDSF", 
+	"S3Secretkey" : "ljdhfudshfiuhdsfds", 
 	"S3Bucket" : "photogrid",
 	"dbURL" :"mongodb://photogrid:photogrid@ds049868.mongolab.com:49868/photogrid"
 }
